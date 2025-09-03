@@ -60,9 +60,9 @@ const (
 	// SchedulerBaseInterval base interval of the scheduler. Controls how often the scheduler fetches database for new changes as well as schedules evaluation of a rule
 	// changing this value is discouraged because this could cause existing alert definition
 	// with intervals that are not exactly divided by this number not to be evaluated
-	SchedulerBaseInterval = 10 * time.Second
+	SchedulerBaseInterval = 1 * time.Second
 	// DefaultRuleEvaluationInterval indicates a default interval of for how long a rule should be evaluated to change state from Pending to Alerting
-	DefaultRuleEvaluationInterval          = SchedulerBaseInterval * 6 // == 60 seconds
+	DefaultRuleEvaluationInterval          = time.Second * 60 // == 60 seconds
 	stateHistoryDefaultEnabled             = true
 	notificationHistoryDefaultEnabled      = false
 	lokiDefaultMaxQueryLength              = 721 * time.Hour // 30d1h, matches the default value in Loki
