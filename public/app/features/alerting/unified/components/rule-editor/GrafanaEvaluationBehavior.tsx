@@ -44,7 +44,7 @@ import { GrafanaAlertStatePicker } from './GrafanaAlertStatePicker';
 import { NeedHelpInfo } from './NeedHelpInfo';
 import { RuleEditorSection } from './RuleEditorSection';
 
-export const MIN_TIME_RANGE_STEP_S = 10; // 10 seconds
+export const MIN_TIME_RANGE_STEP_S = 1; // 1 second
 export const MAX_GROUP_RESULTS = 1000;
 
 const namespaceToGroupOptions = (rulerNamespace: RulerRulesConfigDTO, enableProvisionedGroups: boolean) => {

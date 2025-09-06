@@ -368,21 +368,34 @@ func resultNormal(state *State, rule *models.AlertRule, result eval.Result, logg
 		}
 	case state.State == eval.Alerting && rule.KeepFiringFor > 0:
 		// If the old state is Alerting and the rule has a KeepFiringFor duration then
-		// the state should be set to Recovering when it transitions to Normal.
-		//
-		// EndsAt must be set to a future time for the Alertmanager, the same as for Alerting states.
-		nextEndsAt := nextEndsTime(rule.IntervalSeconds, result.EvaluatedAt)
-		logger.Debug("Changing state",
-			"previous_state",
-			state.State,
-			"next_state",
-			eval.Recovering,
-			"previous_ends_at",
-			state.EndsAt,
-			"next_ends_at",
-			nextEndsAt,
-		)
-		state.SetRecovering(reason, result.EvaluatedAt, nextEndsAt)
+        // the state should be kept as Alerting until the duration has been observed.
+        // When the duration has been observed then the state is set to Normal (Skiping Recovering).
+        //
+        // EndsAt must be set to a future time for the Alertmanager, the same as for Alerting states.
+        if result.EvaluatedAt.Sub(state.StartsAt) >= rule.KeepFiringFor {
+            nextEndsAt := result.EvaluatedAt
+            logger.Debug("Changing state",
+                "previous_state", 
+                state.State,
+                "next_state",
+                eval.Normal,
+                "previous_ends_at",
+                state.EndsAt,
+                "next_ends_at",
+                nextEndsAt,
+            )
+            state.SetNormal(reason, nextEndsAt, nextEndsAt)
+        } else {
+            nextEndsAt := nextEndsTime(rule.IntervalSeconds, result.EvaluatedAt)
+            logger.Debug("Keeping state",
+                "state",
+                state.State,
+                "previous_ends_at",
+                state.EndsAt,
+                "next_ends_at",
+                nextEndsAt,
+            )
+            state.SetAlerting(reason, state.StartsAt, nextEndsAt)
 	default:
 		nextEndsAt := result.EvaluatedAt
 		logger.Debug("Changing state",
