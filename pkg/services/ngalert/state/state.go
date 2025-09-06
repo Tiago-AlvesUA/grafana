@@ -396,6 +396,7 @@ func resultNormal(state *State, rule *models.AlertRule, result eval.Result, logg
                 nextEndsAt,
             )
             state.SetAlerting(reason, state.StartsAt, nextEndsAt)
+		}
 	default:
 		nextEndsAt := result.EvaluatedAt
 		logger.Debug("Changing state",
